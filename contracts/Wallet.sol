@@ -7,7 +7,15 @@ contract Wallet {
     
     mapping(address => uint) Wallets;
 
-    
+    function withdraw(address payable _to, uint _amount) external{
+        require(_amount <= Wallets[msg.sender],"Not enough funds to withdraw");
+        Wallets[msg.sender] -= _amount;
+        _to.transfer(_amount);
+    }
+
+    function getBalance() external view returns(uint){
+        return Wallets[msg.sender];
+    }
 
     receive() external payable{
         Wallets[msg.sender] += msg.value;
