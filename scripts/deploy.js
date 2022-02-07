@@ -17,7 +17,7 @@ async function main() {
   const Wallet = await hre.ethers.getContractFactory("Wallet");
   const wallet = await Wallet.deploy();
 
-  await greeter.deployed();
+  await wallet.deployed();
 
   console.log("Wallet deployed to:", wallet.address);
 }
