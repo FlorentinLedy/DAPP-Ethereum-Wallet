@@ -34,10 +34,48 @@ function App() {
     }
   }
 
+  async function transfer(){
+    if(!amountSend){
+      return;
+    }
+    setError('');
+    setSuccess('');
+    if(typeof window.ethereum !== 'undefined'){
+      const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      try{
+        const tx = {
+          from: accounts[0],
+          to: WalletAddress,
+          value: ethers.utils.parseEther(amountSend)
+        }
+        const transaction= await signer.sendTransaction(tx);
+        await transaction.wait();
+        setAmountSend('');
+        getBalance();
+        setSuccess('Argent bien transféré sur le Wallet !')
+      }catch(err){
+        setError('Une erreur est survenue.');
+      }
+    }
+  }
+
+  function changeAmountSend(e){
+    setAmountSend(e.target.value);
+  }
+
   return (
     <div className="App">
       {error && <p className="error">{error}</p>}
       <h2>{balance / 10**18 } eth</h2>
+      <div className="wallet_flex">
+        <div className="walletG">
+          <h3>Envoyer de l'eth</h3>
+          <input type="text" placeholder="Montant en Eth" onChange={changeAmountSend} />
+          <button onClick={transfer}>Envoyer</button>
+        </div>
+      </div>
     </div>
   );
 }
